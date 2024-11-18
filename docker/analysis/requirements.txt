@@ -1,0 +1,24 @@
+aicsimageio
+anndata~=0.10.5.post1
+biopython~=1.79
+h5py~=3.6.0
+leidenalg~=0.8.9
+manhole~=1.8
+matplotlib~=3.5.1
+muon
+networkx~=2.7
+# pinned for numba
+numpy==1.22
+opencv-python
+pandas~=1.4.1
+pint
+scanpy~=1.8.2
+scipy~=1.8.0
+scvelo~=0.2.4
+scikit-learn
+tables~=3.7.0
+tifffile
+umap-learn~=0.5.2
+
+git+https://github.com/andrewhill157/barcodeutils
+git+https://github.com/hubmapconsortium/fastq-utils@v0.2.5

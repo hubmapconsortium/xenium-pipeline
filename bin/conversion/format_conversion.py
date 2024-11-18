@@ -1,21 +1,11 @@
 #!/usr/bin/env python3
-from argparse import ArgumentParser
-from pathlib import Path
-
-import anndata
-import manhole
-import matplotlib.pyplot as plt
-import scanpy as sc
 
 from common import Assay
-#from plot_utils import new_plot
 
 import spatialdata as sd
 from spatialdata_io import xenium
 
-import json
 import re
-import sys
 import xml.etree.ElementTree as ET
 from argparse import ArgumentParser
 from os import walk, fspath
@@ -23,19 +13,12 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 import aicsimageio
-import cv2
 import manhole
-import numpy as np
-import pandas as pd
 import tifffile as tf
-from PIL import Image
 from pint import Quantity, UnitRegistry
-from scipy.spatial import distance
-from scipy.spatial.distance import cdist
-from sklearn.preprocessing import MinMaxScaler
 
 schema_url_pattern = re.compile(r"\{(.+)\}OME")
-ome_tiff_pattern = re.compile(r"(?P<basename>.*)\.ome\.tiff(f?)$")
+ome_tiff_pattern = re.compile(r"(?P<basename>.*)\.ome\.tif(f?)$")
 
 XENIUM_ZARR_PATH = "Xenium.zarr"
 
@@ -87,12 +70,12 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 
 def main(assay: Assay, data_directory: Path):
     sdata = xenium(data_directory)
-    xenium.write(XENIUM_ZARR_PATH)
+    sdata.write(XENIUM_ZARR_PATH)
     sdata = sd.read_zarr(XENIUM_ZARR_PATH)
     adata = sdata.tables["table"]
 
     tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
-    img = cv2.imread(fspath(tiff_file))
+    img = tf.imread(fspath(tiff_file))
     library_id = list(adata.uns["spatial"].keys())[0]
     adata.uns["spatial"][library_id]["images"] = {"hires": img}
     adata.uns["spatial"][library_id]["scalefactors"] = {
