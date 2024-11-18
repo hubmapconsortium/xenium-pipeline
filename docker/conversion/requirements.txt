@@ -1,5 +1,5 @@
 aicsimageio
-anndata~=0.7.8
+anndata
 biopython~=1.79
 h5py~=3.6.0
 leidenalg~=0.8.9
@@ -10,17 +10,17 @@ networkx~=2.7
 # pinned for numba
 numpy==1.22
 opencv-python
-pandas~=1.4.1
+pandas==2.0.0
 pint
-scanpy~=1.8.2
+scanpy
 scipy~=1.8.0
 scvelo~=0.2.4
 scikit-learn
 spatialdata
-spatialdata-io
 tables~=3.7.0
 tifffile
 umap-learn~=0.5.2
 
 git+https://github.com/andrewhill157/barcodeutils
 git+https://github.com/hubmapconsortium/fastq-utils@v0.2.5
+git+https://github.com/scverse/spatialdata-io
