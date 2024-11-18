@@ -9,7 +9,7 @@ requirements:
 inputs:
   data_dir:
     label: "Directory containing FASTQ files"
-    type: Directory[]
+    type: Directory
   img_dir:
     label: "Directory containing TIFF image data (for Visium assay)"
     type: Directory?
@@ -99,12 +99,13 @@ outputs:
 steps:
   convert_formats:
     in:
-      data_directory:
+      data_dir:
         source: data_dir
       assay:
         source: assay
     out:
-      count_matrix_h5ad
+      - count_matrix_h5ad
+    run: steps/convert-formats.cwl
   scanpy_analysis:
     in:
       assay:
@@ -119,18 +120,18 @@ steps:
       - dispersion_plot
       - umap_density_plot
       - spatial_plot
-    run: steps/scanpy-analysis.cwl
+    run: salmon-rnaseq/steps/scanpy-analysis.cwl
     label: "Secondary analysis via ScanPy"
   scvelo_analysis:
     in:
       spliced_h5ad_file:
-        source: salmon_quantification/count_matrix_h5ad
+        source: convert_formats/count_matrix_h5ad
       assay_name:
         source: assay
     out:
       - annotated_h5ad_file
       - embedding_grid_plot
-    run: steps/scvelo-analysis.cwl
+    run: salmon-rnaseq/steps/scvelo-analysis.cwl
     label: "RNA velocity analysis via scVelo"
   squidpy_analysis:
     in:
@@ -148,7 +149,7 @@ steps:
       - ripley_plot
       - centrality_scores_plot
       - spatial_plot
-    run: steps/squidpy-analysis.cwl
+    run: salmon-rnaseq/steps/squidpy-analysis.cwl
     label: "Spatial analysis via SquidPy"
 #  compute_qc_results:
 #    in:

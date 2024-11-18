@@ -17,7 +17,7 @@ inputs:
     inputBinding:
       position: 1
 outputs:
-  expr_h5ad:
+  count_matrix_h5ad:
     type: File
     outputBinding:
       glob: expr.h5ad

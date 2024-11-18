@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import scanpy as sc
 
 from common import Assay
-from plot_utils import new_plot
+#from plot_utils import new_plot
 
 import spatialdata as sd
 from spatialdata_io import xenium
