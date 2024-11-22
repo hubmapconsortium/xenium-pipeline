@@ -4,6 +4,7 @@ from common import Assay
 
 import spatialdata as sd
 from spatialdata_io import xenium
+import anndata
 
 import re
 import xml.etree.ElementTree as ET
@@ -19,8 +20,19 @@ from pint import Quantity, UnitRegistry
 
 schema_url_pattern = re.compile(r"\{(.+)\}OME")
 ome_tiff_pattern = re.compile(r"(?P<basename>.*)\.ome\.tif(f?)$")
+nanostring_counts_file_pattern = re.compile(r"(?P<basename>.*)_exprMat_file\.csv\.gz$")
+nanostring_meta_file_pattern = re.compile(r"(?P<basename>.*)_metadata_file\.csv\.gz$")
+nanostring_fov_file_pattern = re.compile(r"(?P<basename>.*)_fov_positions_file.csv$")
 
 XENIUM_ZARR_PATH = "Xenium.zarr"
+
+def find_files(directory: Path, pattern) -> Iterable[Path]:
+    for dirpath_str, dirnames, filenames in walk(directory):
+        dirpath = Path(dirpath_str)
+        for filename in filenames:
+            filepath = dirpath / filename
+            if filepath.match(pattern):
+                yield filepath
 
 def get_schema_url(ome_xml_root_node: ET.Element) -> str:
     if m := schema_url_pattern.match(ome_xml_root_node.tag):
@@ -69,23 +81,32 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
                 yield src_filepath
 
 def main(assay: Assay, data_directory: Path):
-    sdata = xenium(data_directory)
-    sdata.write(XENIUM_ZARR_PATH)
-    sdata = sd.read_zarr(XENIUM_ZARR_PATH)
-    adata = sdata.tables["table"]
+    if assay == assay.XENIUM:
+        sdata = xenium(data_directory)
+        sdata.write(XENIUM_ZARR_PATH)
+        sdata = sd.read_zarr(XENIUM_ZARR_PATH)
+        adata = sdata.tables["table"]
 
-    tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
-    img = tf.imread(fspath(tiff_file))
-    library_id = list(adata.uns["spatial"].keys())[0]
-    adata.uns["spatial"][library_id]["images"] = {"hires": img}
-    adata.uns["spatial"][library_id]["scalefactors"] = {
-        "tissue_hires_scalef": 1.0,
-    }
+        tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
+        img = tf.imread(fspath(tiff_file))
+        library_id = list(adata.uns["spatial"].keys())[0]
+        adata.uns["spatial"][library_id]["images"] = {"hires": img}
+        adata.uns["spatial"][library_id]["scalefactors"] = {
+            "tissue_hires_scalef": 1.0,
+        }
+        img = aicsimageio.AICSImage(tiff_file)
+        values, units = physical_dimension_func(img)
+        ureg = UnitRegistry()
+        Q_ = ureg.Quantity
 
-    img = aicsimageio.AICSImage(tiff_file)
-    values, units = physical_dimension_func(img)
-    ureg = UnitRegistry()
-    Q_ = ureg.Quantity
+    elif assay == assay.COSMX:
+        counts_file = find_files(data_directory, nanostring_counts_file_pattern)
+        metadata_file = find_files(data_directory, nanostring_meta_file_pattern)
+        fov_file = find_files(data_directory, nanostring_fov_file_pattern)
+        adata = anndata.read.nanostring(path=data_directory, counts_file=counts_file, metadata_file=metadata_file, \
+                                        fov_file=fov_file)
+
+    adata.obsm["X_spatial"] = adata.obsm["spatial"]
 
     adata.write("expr.h5ad")
 
