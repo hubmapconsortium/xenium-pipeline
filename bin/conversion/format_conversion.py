@@ -60,7 +60,8 @@ def physical_dimension_func(img: aicsimageio.AICSImage) -> Tuple[List[float], Li
     values = []
     units = []
     for dimension in "XY":
-        unit = pixel_node_attrib[f"PhysicalSize{dimension}Unit"]
+#        unit = pixel_node_attrib[f"PhysicalSize{dimension}Unit"]
+        unit = "µm"
         value = float(pixel_node_attrib[f"PhysicalSize{dimension}"])
         values.append(value)
         units.append(unit)
@@ -89,15 +90,15 @@ def main(assay: Assay, data_directory: Path):
 
         tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
         img = tf.imread(fspath(tiff_file))
+
+        img = aicsimageio.AICSImage(tiff_file)
+        values, units = physical_dimension_func(img)
+
         library_id = list(adata.uns["spatial"].keys())[0]
         adata.uns["spatial"][library_id]["images"] = {"hires": img}
         adata.uns["spatial"][library_id]["scalefactors"] = {
-            "tissue_hires_scalef": 1.0,
+            "tissue_hires_scalef": values[0],
         }
-        img = aicsimageio.AICSImage(tiff_file)
-        values, units = physical_dimension_func(img)
-        ureg = UnitRegistry()
-        Q_ = ureg.Quantity
 
     elif assay == assay.COSMX:
         counts_file = find_files(data_directory, nanostring_counts_file_pattern)
