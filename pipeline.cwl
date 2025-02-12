@@ -18,6 +18,10 @@ outputs:
     outputSource: convert_formats/count_matrix_h5ad
     type: File
     label: "Count matrix converted to h5ad"
+  sdata_zarr:
+    outputSource: convert_formats/sdata_zarr
+    type: Directory
+    label: "SpatialData object serialized in zarr format"
 #  scanpy_qc_results:
 #    outputSource: compute_qc_results/scanpy_qc_results
 #    type: File
@@ -92,6 +96,7 @@ steps:
         source: assay
     out:
       - count_matrix_h5ad
+      - sdata_zarr
     run: steps/convert-formats.cwl
   scanpy_analysis:
     in:
@@ -115,8 +120,8 @@ steps:
         source: assay
       h5ad_file:
         source: scanpy_analysis/filtered_data_h5ad
-      img_dir:
-        source: img_dir
+      sdata_zarr:
+        source: convert_formats/sdata_zarr
     out:
       - squidpy_annotated_h5ad
       - neighborhood_enrichment_plot
@@ -125,7 +130,7 @@ steps:
       - ripley_plot
       - centrality_scores_plot
       - spatial_plot
-    run: salmon-rnaseq/steps/squidpy-analysis.cwl
+    run: steps/squidpy-analysis.cwl
     label: "Spatial analysis via SquidPy"
 #  compute_qc_results:
 #    in:
