@@ -10,22 +10,9 @@ inputs:
   data_dir:
     label: "Directory containing FASTQ files"
     type: Directory
-  img_dir:
-    label: "Directory containing TIFF image data (for Visium assay)"
-    type: Directory?
   assay:
     label: "scRNA-seq assay"
     type: string
-  threads:
-    label: "Number of threads for Salmon"
-    type: int
-    default: 1
-  expected_cell_count:
-    type: int?
-  keep_all_barcodes:
-    type: boolean?
-  organism:
-    type: string?
 outputs:
   count_matrix_h5ad:
     outputSource: convert_formats/count_matrix_h5ad
@@ -122,17 +109,6 @@ steps:
       - spatial_plot
     run: salmon-rnaseq/steps/scanpy-analysis.cwl
     label: "Secondary analysis via ScanPy"
-  scvelo_analysis:
-    in:
-      spliced_h5ad_file:
-        source: convert_formats/count_matrix_h5ad
-      assay_name:
-        source: assay
-    out:
-      - annotated_h5ad_file
-      - embedding_grid_plot
-    run: salmon-rnaseq/steps/scvelo-analysis.cwl
-    label: "RNA velocity analysis via scVelo"
   squidpy_analysis:
     in:
       assay:

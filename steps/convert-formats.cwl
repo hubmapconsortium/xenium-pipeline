@@ -21,3 +21,7 @@ outputs:
     type: File
     outputBinding:
       glob: expr.h5ad
+  sdata_zarr:
+    type: Directory
+    outputBinding:
+      glob: Xenium.zarr
