@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 import aicsimageio
-import manhole
+#import manhole
 import tifffile as tf
 from pint import Quantity, UnitRegistry
 
@@ -88,17 +88,17 @@ def main(assay: Assay, data_directory: Path):
         sdata = sd.read_zarr(XENIUM_ZARR_PATH)
         adata = sdata.tables["table"]
 
-        tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
-        img = tf.imread(fspath(tiff_file))
+#        tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
+#        img = tf.imread(fspath(tiff_file))
 
-        img = aicsimageio.AICSImage(tiff_file)
-        values, units = physical_dimension_func(img)
+#        img = aicsimageio.AICSImage(tiff_file)
+#        values, units = physical_dimension_func(img)
 
-        library_id = list(adata.uns["spatial"].keys())[0]
-        adata.uns["spatial"][library_id]["images"] = {"hires": img}
-        adata.uns["spatial"][library_id]["scalefactors"] = {
-            "tissue_hires_scalef": values[0],
-        }
+#       library_id = list(adata.uns["spatial"].keys())[0]
+#        adata.uns["spatial"][library_id]["images"] = {"hires": img}
+#        adata.uns["spatial"][library_id]["scalefactors"] = {
+#            "tissue_hires_scalef": values[0],
+#        }
 
     elif assay == assay.COSMX:
         counts_file = find_files(data_directory, nanostring_counts_file_pattern)
@@ -113,7 +113,7 @@ def main(assay: Assay, data_directory: Path):
 
 
 if __name__ == "__main__":
-    manhole.install(activate_on="USR1")
+#    manhole.install(activate_on="USR1")
 
     p = ArgumentParser()
     p.add_argument("assay", choices=list(Assay), type=Assay)

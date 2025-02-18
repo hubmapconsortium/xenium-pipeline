@@ -28,6 +28,7 @@ RUN pip3 install -r /opt/requirements.txt \
 
 COPY salmon-rnaseq/data /opt/data
 COPY salmon-rnaseq/bin/common /opt
-COPY salmon-rnaseq/bin/analysis /opt
+COPY bin/analysis /opt
+COPY salmon-rnaseq/bin/analysis/plot_utils.py /opt
 
 WORKDIR /opt

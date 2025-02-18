@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -11,7 +11,7 @@ RUN apt-get update \
     flex \
     git \
     libfreetype6-dev \
-    libigraph0-dev \
+#   libigraph0-dev \
     libxml2-dev \
     libtool \
     m4 \
@@ -30,5 +30,6 @@ RUN pip3 install -r /opt/requirements.txt \
 
 COPY salmon-rnaseq/bin/common /opt
 COPY bin/analysis /opt
+COPY salmon-rnaseq/bin/analysis/plot_utils.py /opt/
 
 WORKDIR /opt
