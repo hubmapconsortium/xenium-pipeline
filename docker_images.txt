@@ -1,1 +1,3 @@
 hubmap/spatial-transcriptomics-format-conversion docker/conversion/Dockerfile  base_directory_build
+hubmap/spatial-transcriptomics-analysis docker/analysis/Dockerfile  base_directory_build
+hubmap/spatial-transcriptomics-squidpy  docker/squidpy/Dockerfile   base_directory_build
