@@ -12,57 +12,58 @@ from common import Assay
 from plot_utils import new_plot
 import spatialdata_plot
 
+from spatialdata.transformations import (
+    Affine,
+    MapAxis,
+    Scale,
+    Sequence,
+    Translation,
+    get_transformation,
+    set_transformation,
+)
+
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     if assay in {Assay.XENIUM}:
         sdata = sd.read_zarr(sdata_zarr)
         adata = anndata.read(h5ad_file)
         sdata.tables['table'] = adata
 
-        scale_factor = 1 / 0.2125
-        sdata.shapes['cell_circles'].geometry = sdata.shapes['cell_circles'].geometry.scale(xfact=scale_factor, yfact=scale_factor, zfact=1.0, origin=(0,0))
-        sdata.shapes['cell_circles'].radius *= scale_factor
 
         with new_plot():
             sdata.pl.render_images("morphology_focus").pl.render_shapes(
                 "cell_circles",
-                color='leiden',
-                table_name="table",
-                use_raw=False,
             ).pl.show(
                 title=f"leiden cluster over Morphology image",
-                coordinate_systems="global",
-                figsize=(50, 25),
+                figsize=(10, 5),
             )
-            plt.xlim([0,55000])
-            plt.ylim([0,52000])
             plt.savefig("spatial_scatter.pdf", bbox_inches="tight")
 
-#        adata.obsm["spatial"] = adata.obsm["X_spatial"]
+        adata.obsm["spatial"] = adata.obsm["X_spatial"]
 
-#        sq.gr.spatial_neighbors(adata)
-#        sq.gr.nhood_enrichment(adata, cluster_key="leiden")
+        sq.gr.spatial_neighbors(adata)
+        sq.gr.nhood_enrichment(adata, cluster_key="leiden")
 
-#        with new_plot():
-#            sq.pl.nhood_enrichment(adata, cluster_key="leiden")
-#            plt.savefig("neighborhood_enrichment.pdf", bbox_inches="tight")
+        with new_plot():
+            sq.pl.nhood_enrichment(adata, cluster_key="leiden")
+            plt.savefig("neighborhood_enrichment.pdf", bbox_inches="tight")
 
-#        sq.gr.co_occurrence(adata, cluster_key="leiden")
+        sq.gr.co_occurrence(adata, cluster_key="leiden")
 
-#        with new_plot():
-#            sq.pl.co_occurrence(adata, cluster_key="leiden")
-#            plt.savefig("co_occurrence.pdf", bbox_inches="tight")
+        with new_plot():
+            sq.pl.co_occurrence(adata, cluster_key="leiden")
+            plt.savefig("co_occurrence.pdf", bbox_inches="tight")
 
-#        sq.gr.centrality_scores(adata, cluster_key="leiden")
+        sq.gr.centrality_scores(adata, cluster_key="leiden")
 
-#        with new_plot():
-#            sq.pl.centrality_scores(adata, cluster_key="leiden")
-#            plt.savefig("centrality_scores.pdf", bbox_inches="tight")
+        with new_plot():
+            sq.pl.centrality_scores(adata, cluster_key="leiden")
+            plt.savefig("centrality_scores.pdf", bbox_inches="tight")
 
-#        sq.gr.interaction_matrix(adata, cluster_key="leiden")
+        sq.gr.interaction_matrix(adata, cluster_key="leiden")
 
-#        with new_plot():
-#            sq.pl.interaction_matrix(adata, cluster_key="leiden")
-#            plt.savefig("interaction_matrix.pdf", bbox_inches="tight")
+        with new_plot():
+            sq.pl.interaction_matrix(adata, cluster_key="leiden")
+            plt.savefig("interaction_matrix.pdf", bbox_inches="tight")
 
         #        sq.gr.ripley(adata, cluster_key="leiden")
 
