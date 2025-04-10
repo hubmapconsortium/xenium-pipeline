@@ -137,7 +137,7 @@ steps:
       assay:
         source: assay
       primary_matrix_path:
-        source: salmon_quantification/count_matrix_h5ad
+        source: convert_formats/count_matrix_h5ad
     out:
       - scanpy_qc_results
     run: steps/compute-qc-metrics.cwl

@@ -3,7 +3,7 @@ class: CommandLineTool
 label: Convert Alevin sparse output to anndata.AnnData object, save as h5ad
 requirements:
   DockerRequirement:
-    dockerPull: hubmap/spatial-transcriptomics-format-conversion:0.1
+    dockerPull: hubmap/spatial-transcriptomics-format-conversion:latest
   MultipleInputFeatureRequirement: {}
 baseCommand: /opt/format_conversion.py
 
