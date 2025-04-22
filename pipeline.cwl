@@ -58,14 +58,6 @@ outputs:
     outputSource: scanpy_analysis/marker_gene_plot_logreg
     type: File
     label: "Cluster marker genes, logreg method"
-  scvelo_annotated_h5ad:
-    outputSource: scvelo_analysis/annotated_h5ad_file
-    type: File?
-    label: "scVelo-annotated h5ad file, including cell RNA velocity"
-  scvelo_embedding_grid_plot:
-    outputSource: scvelo_analysis/embedding_grid_plot
-    type: File?
-    label: "scVelo velocity embedding grid plot"
   squidpy_annotated_h5ad:
     outputSource: squidpy_analysis/squidpy_annotated_h5ad
     type: File?
