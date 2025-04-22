@@ -15,10 +15,6 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  salmon_dir:
-    type: Directory
-    inputBinding:
-      position: 3
 outputs:
   scanpy_qc_results:
     type: File
