@@ -104,7 +104,7 @@ steps:
       - dispersion_plot
       - umap_density_plot
       - spatial_plot
-    run: salmon-rnaseq/steps/scanpy-analysis.cwl
+    run: steps/scanpy-analysis.cwl
     label: "Secondary analysis via ScanPy"
   squidpy_analysis:
     in:
