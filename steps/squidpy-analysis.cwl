@@ -15,8 +15,8 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  img_dir:
-    type: Directory?
+  sdata_zarr:
+    type: Directory
     inputBinding:
       position: 2
 outputs:
