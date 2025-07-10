@@ -3,7 +3,7 @@ class: CommandLineTool
 label: Dimensionality reduction and clustering
 requirements:
   DockerRequirement:
-    dockerPull: hubmap/spatial-transcriptomics-squidpy-analysis:latest
+    dockerPull: hubmap/spatial-transcriptomics-squidpy:latest
 baseCommand: /opt/squidpy_entry_point.py
 
 inputs:
