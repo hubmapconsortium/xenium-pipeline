@@ -83,9 +83,9 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 
 def main(assay: Assay, data_directory: Path):
     if assay == assay.XENIUM:
-        sdata = xenium(data_directory)
+        sdata = xenium(data_directory/ Path('lab_processed/xenium_bundle/'))
         sdata.write(XENIUM_ZARR_PATH)
-        sdata = sd.read_zarr(XENIUM_ZARR_PATH/ Path('lab_processed/xenium_bundle/'))
+        sdata = sd.read_zarr(XENIUM_ZARR_PATH)
         adata = sdata.tables["table"]
 
 #        tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
