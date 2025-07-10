@@ -22,10 +22,10 @@ outputs:
     outputSource: convert_formats/sdata_zarr
     type: Directory
     label: "SpatialData object serialized in zarr format"
-  scanpy_qc_results:
-    outputSource: compute_qc_results/scanpy_qc_results
-    type: File
-    label: "Quality control metrics from Scanpy"
+#  scanpy_qc_results:
+#    outputSource: compute_qc_results/scanpy_qc_results
+#    type: File
+#    label: "Quality control metrics from Scanpy"
   dispersion_plot:
     outputSource: scanpy_analysis/dispersion_plot
     type: File
@@ -124,13 +124,13 @@ steps:
       - spatial_plot
     run: steps/squidpy-analysis.cwl
     label: "Spatial analysis via SquidPy"
-  compute_qc_results:
-    in:
-      assay:
-        source: assay
-      primary_matrix_path:
-        source: convert_formats/count_matrix_h5ad
-    out:
-      - scanpy_qc_results
-    run: steps/compute-qc-metrics.cwl
-    label: "Compute QC metrics"
+#  compute_qc_results:
+#    in:
+#      assay:
+#        source: assay
+#      primary_matrix_path:
+#        source: convert_formats/count_matrix_h5ad
+#    out:
+#      - scanpy_qc_results
+#    run: steps/compute-qc-metrics.cwl
+#    label: "Compute QC metrics"
