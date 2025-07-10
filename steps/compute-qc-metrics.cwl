@@ -3,7 +3,7 @@ class: CommandLineTool
 label: Compute QC metrics
 requirements:
   DockerRequirement:
-    dockerPull: hubmap/spatial-transcriptomics-analysis:0.1.2
+    dockerPull: hubmap/spatial-transcriptomics-analysis:latest
 baseCommand: /opt/compute_qc_metrics.py
 
 inputs:
