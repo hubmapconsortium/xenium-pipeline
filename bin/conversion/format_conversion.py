@@ -3,7 +3,7 @@
 from common import Assay
 
 import spatialdata as sd
-from spatialdata_io import xenium
+from spatialdata_io import xenium, cosmx, cosmx_proteomics
 import anndata
 
 import re
@@ -106,6 +106,9 @@ def main(assay: Assay, data_directory: Path):
         fov_file = find_files(data_directory, nanostring_fov_file_pattern)
         adata = anndata.read.nanostring(path=data_directory, counts_file=counts_file, metadata_file=metadata_file, \
                                         fov_file=fov_file)
+
+    elif assay == assay.COSMX_PROTEOMICS:
+        sdata = cosmx_proteomics(data_directory)
 
     adata.obsm["X_spatial"] = adata.obsm["spatial"]
 

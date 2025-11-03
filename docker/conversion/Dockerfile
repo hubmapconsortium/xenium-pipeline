@@ -33,3 +33,4 @@ COPY salmon-rnaseq/bin/common /opt
 COPY bin/conversion /opt
 
 WORKDIR /opt
+
