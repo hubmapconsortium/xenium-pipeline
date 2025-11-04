@@ -11,13 +11,16 @@ import xml.etree.ElementTree as ET
 from argparse import ArgumentParser
 from os import walk, fspath
 from pathlib import Path
-from typing import Iterable, List, Tuple
+from typing import Iterable, List, Optional, Tuple
 
 import aicsimageio
-#import manhole
-import tifffile as tf
-from pint import Quantity, UnitRegistry
+import geopandas as gpd
+import shapely
+import matplotlib.pyplot as plt
+from contextlib import contextmanager
 
+
+debug_out_dir = Path("crop-debug")
 schema_url_pattern = re.compile(r"\{(.+)\}OME")
 ome_tiff_pattern = re.compile(r"(?P<basename>.*)\.ome\.tif(f?)$")
 nanostring_counts_file_pattern = re.compile(r"(?P<basename>.*)_exprMat_file\.csv\.gz$")
@@ -25,6 +28,54 @@ nanostring_meta_file_pattern = re.compile(r"(?P<basename>.*)_metadata_file\.csv\
 nanostring_fov_file_pattern = re.compile(r"(?P<basename>.*)_fov_positions_file.csv$")
 
 XENIUM_ZARR_PATH = "Xenium.zarr"
+
+
+@contextmanager
+def new_plot():
+    """
+    When used in a `with` block, clears matplotlib internal state
+    after plotting and saving things. Probably not necessary to be this
+    thorough in clearing everything, but extra calls to `plt.clf()` and
+    `plf.close()` don't *hurt*
+
+    Intended usage:
+        ```
+        with new_plot():
+            do_matplotlib_things()
+
+            plt.savefig(path)
+            # or
+            fig.savefig(path)
+        ```
+    """
+    plt.clf()
+    try:
+        yield
+    finally:
+        plt.clf()
+        plt.close()
+def find_geojson(directory: Path) -> Optional[Path]:
+    geojson_files = list(directory.glob("**/*.geojson"))
+
+    if len(geojson_files) > 1:
+        raise ValueError(f"Found multiple GeoJSON files in {directory}")
+    elif len(geojson_files) == 1:
+        return geojson_files[0]
+    else:
+        return None
+
+def crop_sdata(sdata, geojson_path):
+    with open(geojson_path) as f:
+        crop_geometry = shapely.from_geojson(f.read())
+        if not isinstance(crop_geometry, shapely.GeometryCollection):
+            crop_geometry = shapely.geometrycollections([crop_geometry])
+
+        closed_geometry = shapely.GeometryCollection(
+            [shapely.Polygon(poly.exterior.coords) for poly in crop_geometry.geoms]
+        )
+
+    sdata = sd.polygon_query(sdata, shapely.MultiPolygon(list(closed_geometry.geoms)), 'global', filter_table=True, clip=False)
+    return sdata
 
 def find_files(directory: Path, pattern) -> Iterable[Path]:
     for dirpath_str, dirnames, filenames in walk(directory):
@@ -84,6 +135,9 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 def main(assay: Assay, data_directory: Path):
     if assay == assay.XENIUM:
         sdata = xenium(data_directory/ Path('lab_processed/xenium_bundle/'))
+        maybe_geojson = find_geojson(data_directory)
+        if maybe_geojson:
+            sdata = crop_sdata(sdata, maybe_geojson)
         sdata.write(XENIUM_ZARR_PATH)
         sdata = sd.read_zarr(XENIUM_ZARR_PATH)
         adata = sdata.tables["table"]
