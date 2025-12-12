@@ -4,6 +4,7 @@ from common import Assay
 
 import spatialdata as sd
 from spatialdata_io import xenium, cosmx, cosmx_proteomics
+#from spatialdata_io import xenium, cosmx
 import anndata
 
 import re
@@ -75,6 +76,7 @@ def crop_sdata(sdata, geojson_path):
         )
 
     sdata = sd.polygon_query(sdata, shapely.MultiPolygon(list(closed_geometry.geoms)), 'global', filter_table=True, clip=False)
+#    sdata = sdata.query.polygon_query(shapely.MultiPolygon(list(closed_geometry.geoms)), 'global', filter_table=True, clip=False)
     return sdata
 
 def find_files(directory: Path, pattern) -> Iterable[Path]:
@@ -135,9 +137,9 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 def main(assay: Assay, data_directory: Path):
     if assay == assay.XENIUM:
         sdata = xenium(data_directory/ Path('lab_processed/xenium_bundle/'))
-        maybe_geojson = find_geojson(data_directory)
-        if maybe_geojson:
-            sdata = crop_sdata(sdata, maybe_geojson)
+#        maybe_geojson = find_geojson(data_directory)
+#        if maybe_geojson:
+#            sdata = crop_sdata(sdata, maybe_geojson)
         sdata.write(XENIUM_ZARR_PATH)
         sdata = sd.read_zarr(XENIUM_ZARR_PATH)
         adata = sdata.tables["table"]
@@ -158,15 +160,19 @@ def main(assay: Assay, data_directory: Path):
         counts_file = find_files(data_directory, nanostring_counts_file_pattern)
         metadata_file = find_files(data_directory, nanostring_meta_file_pattern)
         fov_file = find_files(data_directory, nanostring_fov_file_pattern)
-        adata = anndata.read.nanostring(path=data_directory, counts_file=counts_file, metadata_file=metadata_file, \
-                                        fov_file=fov_file)
+        sdata = cosmx(data_directory)
+        sdata.write('CosMx.zarr')
+        adata = sdata.tables["table"]
 
     elif assay == assay.COSMX_PROTEOMICS:
         sdata = cosmx_proteomics(data_directory)
+        sdata.write('CosMx.zarr')
+        adata = sdata.tables["table"]
 
     adata.obsm["X_spatial"] = adata.obsm["spatial"]
 
     adata.write("expr.h5ad")
+
 
 
 if __name__ == "__main__":

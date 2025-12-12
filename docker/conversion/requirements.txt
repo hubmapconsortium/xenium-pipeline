@@ -1,14 +1,14 @@
 aicsimageio==3.3.1
-anndata==0.11.3
+anndata==0.12.1
 Cython
 numpy==2.1.3
 # pinned for numba
 pint
 scanpy==1.10.4
-spatialdata
-#spatialdata-io==0.2.0
+spatialdata==0.6.0
+#spatialdata-io==0.4.0
 tifffile
 
 git+https://github.com/andrewhill157/barcodeutils
 git+https://github.com/hubmapconsortium/fastq-utils@v0.2.5
-git+https://github.com/SFD5311/spatialdata-io
+git+https://github.com/SFD5311/spatialdata-io@sfd5311/cosmx_proteomics
