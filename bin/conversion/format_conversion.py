@@ -3,8 +3,8 @@
 from common import Assay
 
 import spatialdata as sd
-from spatialdata_io import xenium, cosmx, cosmx_proteomics
-#from spatialdata_io import xenium, cosmx
+#from spatialdata_io import xenium, cosmx, cosmx_proteomics
+from spatialdata_io import xenium, cosmx
 import anndata
 
 import re
@@ -75,9 +75,15 @@ def crop_sdata(sdata, geojson_path):
             [shapely.Polygon(poly.exterior.coords) for poly in crop_geometry.geoms]
         )
 
-    sdata = sd.polygon_query(sdata, shapely.MultiPolygon(list(closed_geometry.geoms)), 'global', filter_table=True, clip=False)
+    sdata_crop = sd.polygon_query(sdata, shapely.MultiPolygon(list(closed_geometry.geoms)), 'global', filter_table=True, clip=False)
+
+
+    #Workaround issue writing out points
+    sdata.points['transcripts'].compute()
+    sdata_crop.points['transcripts'] = sd.models.PointsModel.parse(sdata_crop.points['transcripts'].compute())
+
 #    sdata = sdata.query.polygon_query(shapely.MultiPolygon(list(closed_geometry.geoms)), 'global', filter_table=True, clip=False)
-    return sdata
+    return sdata_crop
 
 def find_files(directory: Path, pattern) -> Iterable[Path]:
     for dirpath_str, dirnames, filenames in walk(directory):
@@ -136,38 +142,24 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 
 def main(assay: Assay, data_directory: Path):
     if assay == assay.XENIUM:
-        sdata = xenium(data_directory/ Path('lab_processed/xenium_bundle/'))
-#        maybe_geojson = find_geojson(data_directory)
-#        if maybe_geojson:
-#            sdata = crop_sdata(sdata, maybe_geojson)
+        sdata = xenium(data_directory)
+
+        maybe_geojson = find_geojson(data_directory)
+        if maybe_geojson:
+            sdata = crop_sdata(sdata, maybe_geojson)
         sdata.write(XENIUM_ZARR_PATH)
         sdata = sd.read_zarr(XENIUM_ZARR_PATH)
         adata = sdata.tables["table"]
 
-#        tiff_file = list(find_ome_tiffs(input_dir=data_directory))[0]
-#        img = tf.imread(fspath(tiff_file))
-
-#        img = aicsimageio.AICSImage(tiff_file)
-#        values, units = physical_dimension_func(img)
-
-#       library_id = list(adata.uns["spatial"].keys())[0]
-#        adata.uns["spatial"][library_id]["images"] = {"hires": img}
-#        adata.uns["spatial"][library_id]["scalefactors"] = {
-#            "tissue_hires_scalef": values[0],
-#        }
-
     elif assay == assay.COSMX:
-        counts_file = find_files(data_directory, nanostring_counts_file_pattern)
-        metadata_file = find_files(data_directory, nanostring_meta_file_pattern)
-        fov_file = find_files(data_directory, nanostring_fov_file_pattern)
         sdata = cosmx(data_directory)
         sdata.write('CosMx.zarr')
         adata = sdata.tables["table"]
 
-    elif assay == assay.COSMX_PROTEOMICS:
-        sdata = cosmx_proteomics(data_directory)
-        sdata.write('CosMx.zarr')
-        adata = sdata.tables["table"]
+#    elif assay == assay.COSMX_PROTEOMICS:
+#        sdata = cosmx_proteomics(data_directory)
+#        sdata.write('CosMx.zarr')
+#        adata = sdata.tables["table"]
 
     adata.obsm["X_spatial"] = adata.obsm["spatial"]
 
