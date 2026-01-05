@@ -11,3 +11,4 @@ tifffile
 
 git+https://github.com/andrewhill157/barcodeutils
 git+https://github.com/hubmapconsortium/fastq-utils@v0.2.5
+#git+https://github.com/SFD5311/spatialdata-io@sfd5311/cosmx_proteomics

@@ -18,18 +18,24 @@ RUN apt-get update \
     libtool \
     m4 \
     pkg-config \
-    python3 \
     python3-dev \
     python3-pip \
+    python3-venv \
+    python-is-python3 \
     zlib1g-dev \
  && rm -rf /var/cache/apt/*
+
+
+#RUN python3 -m venv /opt/venv
+#ENV PATH=/opt/venv/bin:${PATH}
 
 ## Python packages
 COPY docker/conversion/requirements.txt /opt/requirements.txt
 RUN pip3 install -r /opt/requirements.txt \
  && rm -rf /root/.cache/pip
 
-COPY salmon-rnaseq/bin/common /opt
+COPY bin/common /opt
 COPY bin/conversion /opt
 
 WORKDIR /opt
+
