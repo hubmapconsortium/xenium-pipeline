@@ -7,7 +7,6 @@ from typing import List, Optional, Tuple
 
 import anndata
 import manhole
-import muon as mu
 import pandas as pd
 import scanpy as sc
 

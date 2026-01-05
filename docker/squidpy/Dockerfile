@@ -28,7 +28,7 @@ COPY docker/squidpy/requirements.txt /opt/requirements.txt
 RUN pip3 install -r /opt/requirements.txt \
  && rm -rf /root/.cache/pip
 
-COPY salmon-rnaseq/bin/common /opt
+COPY bin/common /opt
 COPY bin/analysis /opt
 COPY salmon-rnaseq/bin/analysis/plot_utils.py /opt/
 
