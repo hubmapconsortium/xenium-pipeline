@@ -142,7 +142,7 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 
 def main(assay: Assay, data_directory: Path):
     if assay == assay.XENIUM:
-        sdata = xenium(data_directory / "lab_processed/xenium_bundle")
+        sdata = xenium(data_directory / Path('lab_processed/xenium_bundle/'))
 
         maybe_geojson = find_geojson(data_directory)
         if maybe_geojson:
