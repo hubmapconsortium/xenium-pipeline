@@ -9,6 +9,7 @@ pint
 scanpy==1.10.4
 spatialdata==0.4.0
 spatialdata-io==0.2.0
+statsmodels==0.14.6
 tifffile
 
 git+https://github.com/andrewhill157/barcodeutils
