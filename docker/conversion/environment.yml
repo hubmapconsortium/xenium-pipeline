@@ -9,9 +9,11 @@ dependencies:
   - pyarrow==21.0.0
   - anndata==0.9.2
   - scanpy==1.10.4
+  - scipy==1.15.3
   - pip:
       - aicsimageio==3.3.1
       - pint
+      - cython
       - spatialdata==0.4.0
       - spatialdata-io==0.2.0
       - tifffile
