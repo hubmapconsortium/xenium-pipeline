@@ -7,7 +7,7 @@ pint
 pyarrow==21.0.0
 scanpy==1.10.4
 spatialdata==0.4.0
-spatialdata-io==0.2.0
+spatialdata-io==0.3.0
 statsmodels==0.14.5
 tifffile
 
