@@ -21,7 +21,7 @@ RUN apt-get update \
     python3-dev \
     python3-pip \
     zlib1g-dev \
-    python3.12-venv \
+    python3-venv \
  && rm -rf /var/cache/apt/*
 
 ## Python packages
