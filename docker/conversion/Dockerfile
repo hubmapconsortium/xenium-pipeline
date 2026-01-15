@@ -17,15 +17,15 @@ RUN apt-get update \
     libtool \
     m4 \
     pkg-config \
-    python3 \
-    python3-dev \
-    python3-pip \
+    python3.11 \
+    python3.11-dev \
+    python3.11-pip \
     zlib1g-dev \
-    python3-venv \
+    python3.11-venv \
  && rm -rf /var/cache/apt/*
 
 ## Python packages
-RUN python3 -m venv /opt/venv
+RUN python3.11 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY docker/conversion/requirements.txt /opt/requirements.txt
 RUN pip3 install -r /opt/requirements.txt \
