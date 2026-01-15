@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -17,11 +17,11 @@ RUN apt-get update \
     libtool \
     m4 \
     pkg-config \
-    python3.11 \
-    python3.11-dev \
-    python3.11-pip \
+    python3 \
+    python3-dev \
+    python3-pip \
     zlib1g-dev \
-    python3.11-venv \
+    python3-venv \
  && rm -rf /var/cache/apt/*
 
 ## Python packages
