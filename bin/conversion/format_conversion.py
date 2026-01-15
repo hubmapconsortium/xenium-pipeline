@@ -147,6 +147,7 @@ def main(assay: Assay, data_directory: Path):
         maybe_geojson = find_geojson(data_directory)
         if maybe_geojson:
             sdata = crop_sdata(sdata, maybe_geojson)
+        print(sdata)
         sdata.write(XENIUM_ZARR_PATH)
         sdata = sd.read_zarr(XENIUM_ZARR_PATH)
         adata = sdata.tables["table"]
