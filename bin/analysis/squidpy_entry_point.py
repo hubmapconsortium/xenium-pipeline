@@ -12,6 +12,8 @@ from common import Assay
 from plot_utils import new_plot
 import spatialdata_plot
 
+from spatialdata.models import TableModel
+
 from spatialdata.transformations import (
     Affine,
     MapAxis,
@@ -24,19 +26,19 @@ from spatialdata.transformations import (
 
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     if assay in {Assay.XENIUM}:
-        sdata = sd.read_zarr(sdata_zarr)
-        adata = anndata.read(h5ad_file)
-        sdata.tables['table'] = adata
+        #sdata = sd.read_zarr(sdata_zarr)
+        adata = anndata.read_h5ad(h5ad_file)
+        #sdata.tables['table'] = TableModel.parse(adata)
 
 
-        with new_plot():
-            sdata.pl.render_images("morphology_focus").pl.render_shapes(
-                "cell_circles",
-            ).pl.show(
-                title=f"leiden cluster over Morphology image",
-                figsize=(10, 5),
-            )
-            plt.savefig("spatial_scatter.pdf", bbox_inches="tight")
+        #with new_plot():
+        #    sdata.pl.render_images("morphology_focus").pl.render_shapes(
+        #        "cell_circles",
+        #    ).pl.show(
+        #        title=f"leiden cluster over Morphology image",
+        #        figsize=(10, 5),
+        #    )
+        #    plt.savefig("spatial_scatter.pdf", bbox_inches="tight")
 
         adata.obsm["spatial"] = adata.obsm["X_spatial"]
 

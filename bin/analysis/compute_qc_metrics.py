@@ -14,7 +14,7 @@ from common import Assay
 
 
 def write_scanpy_qc(adata: anndata.AnnData):
-    qc_by_cell, qc_by_gene = sc.pp.calculate_qc_metrics(adata)
+    qc_by_cell, qc_by_gene = sc.pp.calculate_qc_metrics(adata, percent_top=None)
 
     qc_path = Path("qc_results.hdf5").absolute()
     print("Saving QC results to", qc_path)
@@ -24,7 +24,7 @@ def write_scanpy_qc(adata: anndata.AnnData):
 
 
 def main(assay: Assay, primary_matrix_path: Path):
-    expr_primary = anndata.read(primary_matrix_path)
+    expr_primary = anndata.read_h5ad(primary_matrix_path)
     expr_primary.var_names_make_unique()
 
     write_scanpy_qc(expr_primary)

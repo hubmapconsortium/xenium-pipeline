@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -19,9 +19,14 @@ RUN apt-get update \
     python3 \
     python3-dev \
     python3-pip \
+    python3-venv \
+    python-is-python3 \
     wget \
     zlib1g-dev \
  && rm -rf /var/cache/apt/*
+
+RUN python3 -m venv /opt/venv
+ENV PATH=/opt/venv/bin:${PATH}
 
 ## Python packages
 COPY docker/squidpy/requirements.txt /opt/requirements.txt
