@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -26,8 +26,8 @@ RUN apt-get update \
  && rm -rf /var/cache/apt/*
 
 
-#RUN python3 -m venv /opt/venv
-#ENV PATH=/opt/venv/bin:${PATH}
+RUN python3 -m venv /opt/venv
+ENV PATH=/opt/venv/bin:${PATH}
 
 ## Python packages
 COPY docker/conversion/requirements.txt /opt/requirements.txt

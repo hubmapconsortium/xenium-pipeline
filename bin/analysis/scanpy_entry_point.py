@@ -17,9 +17,13 @@ def main(assay: Assay, h5ad_file: Path):
         adata.X = adata.layers[assay.secondary_analysis_layer]
     adata.var_names_make_unique()
 
-    sc.pp.filter_cells(adata, min_counts=1)
+    # remove cells with fewer than 5 total gene counts
+    sc.pp.filter_cells(adata, min_counts=5)
 
+    # remove genes that are not expressed in any cell
+    sc.pp.filter_genes(adata, min_cells=1)
     # add the total counts per cell as observations-annotation to adata
+
     adata.obs["n_counts"] = adata.X.sum(axis=1)
 
     sc.pp.normalize_total(adata, inplace=True)
