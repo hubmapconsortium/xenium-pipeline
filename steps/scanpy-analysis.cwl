@@ -3,7 +3,7 @@ class: CommandLineTool
 label: Dimensionality reduction and clustering
 requirements:
   DockerRequirement:
-    dockerPull: hubmap/spatial-transcriptomics-analysis:latest
+    dockerPull: hubmap/spatial-transcriptomics-analysis:0.2.0
 baseCommand: /opt/scanpy_entry_point.py
 
 inputs:
