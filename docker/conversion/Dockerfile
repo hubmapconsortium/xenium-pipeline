@@ -29,6 +29,8 @@ RUN apt-get update \
 RUN python3 -m venv /opt/venv
 ENV PATH=/opt/venv/bin:${PATH}
 
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
 ## Python packages
 COPY docker/conversion/requirements.txt /opt/requirements.txt
 RUN pip3 install -r /opt/requirements.txt \
