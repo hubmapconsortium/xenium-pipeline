@@ -14,7 +14,6 @@ from os import walk, fspath
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
-import aicsimageio
 import geopandas as gpd
 import shapely
 import matplotlib.pyplot as plt
@@ -97,35 +96,6 @@ def get_schema_url(ome_xml_root_node: ET.Element) -> str:
     if m := schema_url_pattern.match(ome_xml_root_node.tag):
         return m.group(1)
     raise ValueError(f"Couldn't extract schema URL from tag name {ome_xml_root_node.tag}")
-
-
-def physical_dimension_func(img: aicsimageio.AICSImage) -> Tuple[List[float], List[str]]:
-    """
-    Returns lists of physical dimensions of pixels and corresponding units
-    read from OME-XML metadata of input image
-    """
-
-    # aicsimageio parses the OME-XML metadata when loading an image,
-    # and uses that metadata to populate various data structures in
-    # the AICSImage object. The AICSImage.metadata.to_xml() function
-    # constructs a new OME-XML string from that metadata, so anything
-    # ignored by aicsimageio won't be present in that XML document.
-    # Unfortunately, current aicsimageio ignores physical size units,
-    # so we have to parse the original XML ourselves:
-    root = ET.fromstring(img.xarray_dask_data.unprocessed[270])
-    schema_url = get_schema_url(root)
-    pixel_node_attrib = root.findall(f".//{{{schema_url}}}Pixels")[0].attrib
-
-    values = []
-    units = []
-    for dimension in "XY":
-#        unit = pixel_node_attrib[f"PhysicalSize{dimension}Unit"]
-        unit = "µm"
-        value = float(pixel_node_attrib[f"PhysicalSize{dimension}"])
-        values.append(value)
-        units.append(unit)
-
-    return values, units
 
 def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
     """
