@@ -8,6 +8,8 @@ from spatialdata_io import xenium, cosmx
 import anndata
 
 import re
+import os
+import shutil
 import xml.etree.ElementTree as ET
 from argparse import ArgumentParser
 from os import walk, fspath
@@ -29,6 +31,24 @@ nanostring_fov_file_pattern = re.compile(r"(?P<basename>.*)_fov_positions_file.c
 
 XENIUM_ZARR_PATH = "Xenium.zarr"
 
+
+def rearrange_data(data_directory):
+    data_directory = Path(data_directory) / 'raw/'
+    directory = Path('cosmx')
+    os.makedirs(directory)
+    os.makedirs(directory / 'CellLabels')
+    os.makedirs(directory / 'CellComposite')
+    for f in data_directory.iterdir():
+        if f.is_file():
+            shutil.copy(f, directory)
+    for d in (data_directory / 'images'):
+        for f in d.iterdir():
+            if 'CellLabels' in f.name:
+                shutil.copy(f, directory / 'CellLabels')
+            elif '.tif' in f.name:
+                shutil.copy(f, directory / f'CellComposite/_{f.stem.replace('OV', '')}.tif')
+
+    return directory
 
 @contextmanager
 def new_plot():
