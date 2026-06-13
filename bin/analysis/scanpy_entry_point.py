@@ -72,14 +72,14 @@ def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     print("Saving output to", output_file.absolute())
     print(adata.uns['rank_genes_groups']['names'])
     # Save normalized/etc. data
-    adata.write_h5ad(output_file)
+    #adata.write_h5ad(output_file)
     
     sdata = sd.read_zarr(sdata_zarr)
     table_key = "square_008um" if assay == Assay.VISIUM_HD else "processed"
     sdata.tables[table_key] = sd.models.TableModel.parse(adata)
     print(sdata_zarr.name)
     sdata.write(sdata_zarr.name)
-
+    adata.write_h5ad(output_file)
 
 if __name__ == "__main__":
     manhole.install(activate_on="USR1")

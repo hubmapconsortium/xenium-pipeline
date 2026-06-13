@@ -34,7 +34,7 @@ XENIUM_ZARR_PATH = "Xenium.zarr"
 
 
 def rearrange_data(data_directory: Path, proteomics:bool=False)->Path:
-    mask_dir = 'ProteinMask' if proteomics else 'CellLabels'
+    mask_dir = 'ProteinMasks' if proteomics else 'CellLabels'
     image_dir = 'ProteinImages' if proteomics else 'CellComposite'
     data_directory = Path(data_directory) / 'raw/'
     directory = Path('cosmx')
@@ -50,7 +50,7 @@ def rearrange_data(data_directory: Path, proteomics:bool=False)->Path:
         for f in d.iterdir():
             if 'CellLabels' in f.name:
                 shutil.copy(f, directory / mask_dir)
-            elif '.tif' in f.name:
+            elif '.tif' in f.name or '.TIF' in f.name:
                 shutil.copy(f, directory / f'{image_dir}/_{f.stem.replace('OV', '')}.tif')
     return directory
 

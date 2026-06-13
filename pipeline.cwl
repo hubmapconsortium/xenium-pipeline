@@ -79,6 +79,9 @@ outputs:
   squidpy_spatial_plot:
     outputSource: squidpy_analysis/spatial_plot
     type: File?
+  ome_tiffs:
+    outputSource: ome_tiff_creation/ome_tiffs
+    type: Directory?
 steps:
   convert_formats:
     in:
@@ -137,3 +140,13 @@ steps:
       - scanpy_qc_results
     run: steps/compute-qc-metrics.cwl
     label: "Compute QC metrics"
+  ome_tiff_creation:
+    in:
+      assay:
+        source: assay
+      data_dir:
+        source: data_dir
+    out:
+      - ome_tiffs
+    run: steps/ome-tiff-creation.cwl
+    label: "Create ome tiffs"
