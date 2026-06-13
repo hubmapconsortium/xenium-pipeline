@@ -81,3 +81,11 @@ class Assay(Enum):
         False,
         False,
     )
+    VISIUM_HD = (
+        "visium_hd",
+        "",
+        AnnDataLayer.SPLICED,
+        False,
+        False,
+        False,
+        )

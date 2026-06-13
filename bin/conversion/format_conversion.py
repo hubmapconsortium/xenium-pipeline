@@ -172,10 +172,20 @@ def main(assay: Assay, data_directory: Path):
 #        sdata.write('CosMx.zarr')
 #        adata = sdata.tables["table"]
 
+    elif assay = assay.VISIUM_HD:
+        directory = data_directory / "lab_processed/spaceranger/"
+
+
+        maybe_geojson = find_geojson(data_directory)
+        if maybe_geojson:
+            sdata = crop_sdata(sdata, maybe_geojson)
+        sdata.write(XENIUM_ZARR_PATH)
+        sdata = sd.read_zarr(XENIUM_ZARR_PATH)
+        adata = sdata.tables["square_008um"]
+
     adata.obsm["X_spatial"] = adata.obsm["spatial"]
 
     adata.write("expr.h5ad")
-
 
 
 if __name__ == "__main__":

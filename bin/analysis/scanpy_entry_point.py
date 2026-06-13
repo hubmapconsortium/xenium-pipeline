@@ -74,7 +74,8 @@ def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     adata.write_h5ad(output_file)
     
     sdata = sd.read_zarr(sdata_zarr)
-    sdata.tables['processed'] = sd.models.TableModel.parse(adata)
+    table_key = "square_008um" if assay == Assay.VISIUM_HD else "processed"
+    sdata.tables[table_key] = sd.models.TableModel.parse(adata)
     print(sdata_zarr.name)
     sdata.write(sdata_zarr.name)
 
