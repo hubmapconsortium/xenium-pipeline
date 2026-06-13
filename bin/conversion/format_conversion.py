@@ -33,12 +33,14 @@ nanostring_fov_file_pattern = re.compile(r"(?P<basename>.*)_fov_positions_file.c
 XENIUM_ZARR_PATH = "Xenium.zarr"
 
 
-def rearrange_data(data_directory):
+def rearrange_data(data_directory: Path, proteomics:bool=False)->Path:
+    mask_dir = 'ProteinMask' if proteomics else 'CellLabels'
+    image_dir = 'ProteinImages' if proteomics else 'CellComposite'
     data_directory = Path(data_directory) / 'raw/'
     directory = Path('cosmx')
     os.makedirs(directory)
-    os.makedirs(directory / 'CellLabels')
-    os.makedirs(directory / 'CellComposite')
+    os.makedirs(directory / mask_dir)
+    os.makedirs(directory / image_dir)
     for f in data_directory.iterdir():
         if f.is_file():
             shutil.copy(f, directory / f.name)
@@ -47,11 +49,9 @@ def rearrange_data(data_directory):
             continue
         for f in d.iterdir():
             if 'CellLabels' in f.name:
-                shutil.copy(f, (directory / 'CellLabels/') / f.name)
-            elif '.tif' in f.name or '.TIF' in f.name:
-                shutil.copy(f, directory / f'CellComposite/_{f.stem.replace('OV', '')}.tif')
-
-#    print(list((directory / 'CellLabels/').iterdir()))
+                shutil.copy(f, directory / mask_dir)
+            elif '.tif' in f.name:
+                shutil.copy(f, directory / f'{image_dir}/_{f.stem.replace('OV', '')}.tif')
     return directory
 
 @contextmanager
@@ -158,11 +158,11 @@ def main(assay: Assay, data_directory: Path):
         directory = rearrange_data(data_directory)
         sdata = cosmx(directory)
         sdata = subset_spatialdata(sdata)
-        #sdata = cosmx(data_directory, dataset_id='TMA1_TMA2_section5')
         sdata.write('CosMx.zarr')
         adata = sdata.tables["table"]
 
     elif assay == assay.COSMX_PROTEOMICS:
+        data_directory = rearrange_data(data_directory, proteomics=True)
         sdata = cosmx_proteomics(data_directory)
         sdata.write('CosMx.zarr')
         adata = sdata.tables["table"]
