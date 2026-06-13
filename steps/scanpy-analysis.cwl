@@ -15,11 +15,19 @@ inputs:
     type: File
     inputBinding:
       position: 1
+  sdata_zarr:
+    type: Directory
+    inputBinding:
+      position: 2
 outputs:
   filtered_data_h5ad:
     type: File
     outputBinding:
       glob: secondary_analysis.h5ad
+  sdata_zarr:
+    type: Directory
+    outputBinding:
+      glob: '*.zarr'
   dispersion_plot:
     type: File
     outputBinding:
@@ -44,3 +52,4 @@ outputs:
     type: File
     outputBinding:
       glob: marker_genes_by_cluster_logreg.pdf
+  

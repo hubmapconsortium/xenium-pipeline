@@ -25,7 +25,7 @@ from spatialdata.transformations import (
 )
 
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
-    if assay in {Assay.XENIUM}:
+    if assay in {Assay.XENIUM, Assay.COSMX}:
         #sdata = sd.read_zarr(sdata_zarr)
         adata = anndata.read_h5ad(h5ad_file)
         #sdata.tables['table'] = TableModel.parse(adata)
@@ -40,8 +40,8 @@ def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
         #    )
         #    plt.savefig("spatial_scatter.pdf", bbox_inches="tight")
 
-        adata.obsm["spatial"] = adata.obsm["X_spatial"]
-
+        adata.obsm["spatial"] = adata.obsm["global"] if assay == Assay.COSMX else adata.obsm["X_spatial"]
+        adata.obsm["X_spatial"] = adata.obsm["spatial"]
         sq.gr.spatial_neighbors(adata)
         sq.gr.nhood_enrichment(adata, cluster_key="leiden")
 

@@ -6,6 +6,6 @@ manhole~=1.8
 numpy==2.1.3
 tables
 scanpy==1.10.4
-
+spatialdata==0.7.2
 git+https://github.com/andrewhill157/barcodeutils
 git+https://github.com/hubmapconsortium/fastq-utils@v0.2.5

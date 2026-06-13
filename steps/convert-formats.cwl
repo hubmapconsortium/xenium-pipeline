@@ -24,4 +24,4 @@ outputs:
   sdata_zarr:
     type: Directory
     outputBinding:
-      glob: Xenium.zarr
+      glob: '*.zarr'

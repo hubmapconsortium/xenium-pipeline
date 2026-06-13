@@ -6,6 +6,7 @@ import spatialdata as sd
 #from spatialdata_io import xenium, cosmx, cosmx_proteomics
 from spatialdata_io import xenium, cosmx
 import anndata
+import annsel as an
 
 import re
 import os
@@ -40,14 +41,20 @@ def rearrange_data(data_directory):
     os.makedirs(directory / 'CellComposite')
     for f in data_directory.iterdir():
         if f.is_file():
-            shutil.copy(f, directory)
-    for d in (data_directory / 'images'):
+            shutil.copy(f, directory / f.name)
+    for d in (data_directory / 'images').iterdir():
+        if not d.is_dir():
+            continue
         for f in d.iterdir():
+            print(f.name)
             if 'CellLabels' in f.name:
-                shutil.copy(f, directory / 'CellLabels')
-            elif '.tif' in f.name:
+                shutil.copy(f, (directory / 'CellLabels/') / f.name)
+            elif '.tif' in f.name or '.TIF' in f.name:
+                print('morphology')
                 shutil.copy(f, directory / f'CellComposite/_{f.stem.replace('OV', '')}.tif')
 
+#    print(list((directory / 'CellLabels/').iterdir()))
+    print(list((directory / 'CellComposite/').iterdir()))
     return directory
 
 @contextmanager
@@ -130,6 +137,16 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
                 src_filepath = dirpath / filename
                 yield src_filepath
 
+def subset_spatialdata(sdata: sd.SpatialData):
+    fovs = [k.split('_')[0] for k in sdata.images]
+    print(sdata.images.keys())
+    print(sdata.labels.keys())
+    table_name = list(sdata.tables)[0]
+    sdata_subset = sd.filter_by_table_query(sdata, table_name=table_name, obs_expr=an.col("fov").is_in(fovs))
+    sdata_subset.images = sdata.images
+    return sdata_subset
+
+
 def main(assay: Assay, data_directory: Path):
     if assay == assay.XENIUM:
         sdata = xenium(data_directory / "lab_processed/xenium_bundle")
@@ -142,7 +159,11 @@ def main(assay: Assay, data_directory: Path):
         adata = sdata.tables["table"]
 
     elif assay == assay.COSMX:
-        sdata = cosmx(data_directory)
+
+        directory = rearrange_data(data_directory)
+        sdata = cosmx(directory)
+        sdata = subset_spatialdata(sdata)
+        #sdata = cosmx(data_directory, dataset_id='TMA1_TMA2_section5')
         sdata.write('CosMx.zarr')
         adata = sdata.tables["table"]
 

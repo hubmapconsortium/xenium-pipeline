@@ -9,9 +9,10 @@ import scanpy as sc
 
 from common import Assay
 from plot_utils import new_plot
+import spatialdata as sd
 
 
-def main(assay: Assay, h5ad_file: Path):
+def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     adata = anndata.read_h5ad(h5ad_file)
     if assay.secondary_analysis_layer in adata.layers:
         adata.X = adata.layers[assay.secondary_analysis_layer]
@@ -71,6 +72,11 @@ def main(assay: Assay, h5ad_file: Path):
     print("Saving output to", output_file.absolute())
     # Save normalized/etc. data
     adata.write_h5ad(output_file)
+    
+    sdata = sd.read_zarr(sdata_zarr)
+    sdata.tables['processed'] = sd.models.TableModel.parse(adata)
+    print(sdata_zarr.name)
+    sdata.write(sdata_zarr.name)
 
 
 if __name__ == "__main__":
@@ -79,6 +85,7 @@ if __name__ == "__main__":
     p = ArgumentParser()
     p.add_argument("assay", choices=list(Assay), type=Assay)
     p.add_argument("alevin_h5ad_file", type=Path)
+    p.add_argument("sdata_zarr", type=Path)
     args = p.parse_args()
 
-    main(args.assay, args.alevin_h5ad_file)
+    main(args.assay, args.alevin_h5ad_file, args.sdata_zarr)

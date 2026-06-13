@@ -36,6 +36,8 @@ COPY docker/conversion/requirements.txt /opt/requirements.txt
 RUN pip3 install -r /opt/requirements.txt \
  && rm -rf /root/.cache/pip
 
+RUN pip3 install git+https://github.com/hubmapconsortium/spatialdata-io@77e4c512d4377c776751fe0dc3f88af17710c7b3
+
 COPY bin/common /opt
 COPY bin/conversion /opt
 

@@ -7,8 +7,9 @@ pint
 ome-zarr==0.13.0
 scanpy==1.10.4
 setuptools==80.10.1
-spatialdata==0.7.2
-spatialdata-io==0.5.0
+#spatialdata==0.7.2
+spatialdata
+#spatialdata-io==0.6.0
 tifffile
 xarray==2025.12.0
 xarray-spatial==0.5.3
@@ -16,5 +17,5 @@ zarr>=3.0
 
 git+https://github.com/andrewhill157/barcodeutils
 git+https://github.com/hubmapconsortium/fastq-utils@v0.2.5
-#git+https://github.com/SFD5311/spatialdata-io@sfd5311/cosmx_proteomics
+git+https://github.com/hubmapconsortium/spatialdata-io@sfd5311/cosmx-reader-fix
 
