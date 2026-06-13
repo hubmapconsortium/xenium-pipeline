@@ -70,6 +70,7 @@ def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
 
     output_file = Path("secondary_analysis.h5ad")
     print("Saving output to", output_file.absolute())
+    print(adata.uns['rank_genes_groups']['names'])
     # Save normalized/etc. data
     adata.write_h5ad(output_file)
     

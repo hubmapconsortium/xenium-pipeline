@@ -25,7 +25,7 @@ from spatialdata.transformations import (
 )
 
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
-    if assay in {Assay.XENIUM, Assay.COSMX, ASSAY.VISIUM_HD}:
+    if assay in {Assay.XENIUM, Assay.COSMX, Assay.VISIUM_HD, Assay.COSMX_PROTEOMICS}:
         #sdata = sd.read_zarr(sdata_zarr)
         adata = anndata.read_h5ad(h5ad_file)
         #sdata.tables['table'] = TableModel.parse(adata)

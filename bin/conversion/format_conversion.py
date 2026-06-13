@@ -4,7 +4,7 @@ from common import Assay
 
 import spatialdata as sd
 #from spatialdata_io import xenium, cosmx, cosmx_proteomics
-from spatialdata_io import xenium, cosmx
+from spatialdata_io import xenium, cosmx, visium_hd, cosmx_proteomics
 import anndata
 import annsel as an
 
@@ -46,15 +46,12 @@ def rearrange_data(data_directory):
         if not d.is_dir():
             continue
         for f in d.iterdir():
-            print(f.name)
             if 'CellLabels' in f.name:
                 shutil.copy(f, (directory / 'CellLabels/') / f.name)
             elif '.tif' in f.name or '.TIF' in f.name:
-                print('morphology')
                 shutil.copy(f, directory / f'CellComposite/_{f.stem.replace('OV', '')}.tif')
 
 #    print(list((directory / 'CellLabels/').iterdir()))
-    print(list((directory / 'CellComposite/').iterdir()))
     return directory
 
 @contextmanager
@@ -139,8 +136,6 @@ def find_ome_tiffs(input_dir: Path) -> Iterable[Path]:
 
 def subset_spatialdata(sdata: sd.SpatialData):
     fovs = [k.split('_')[0] for k in sdata.images]
-    print(sdata.images.keys())
-    print(sdata.labels.keys())
     table_name = list(sdata.tables)[0]
     sdata_subset = sd.filter_by_table_query(sdata, table_name=table_name, obs_expr=an.col("fov").is_in(fovs))
     sdata_subset.images = sdata.images
@@ -167,20 +162,20 @@ def main(assay: Assay, data_directory: Path):
         sdata.write('CosMx.zarr')
         adata = sdata.tables["table"]
 
-#    elif assay == assay.COSMX_PROTEOMICS:
-#        sdata = cosmx_proteomics(data_directory)
-#        sdata.write('CosMx.zarr')
-#        adata = sdata.tables["table"]
+    elif assay == assay.COSMX_PROTEOMICS:
+        sdata = cosmx_proteomics(data_directory)
+        sdata.write('CosMx.zarr')
+        adata = sdata.tables["table"]
 
-    elif assay = assay.VISIUM_HD:
+    elif assay == assay.VISIUM_HD:
         directory = data_directory / "lab_processed/spaceranger/"
-
+        sdata = visium_hd(directory)
 
         maybe_geojson = find_geojson(data_directory)
         if maybe_geojson:
             sdata = crop_sdata(sdata, maybe_geojson)
-        sdata.write(XENIUM_ZARR_PATH)
-        sdata = sd.read_zarr(XENIUM_ZARR_PATH)
+        sdata.write('Visium_HD.zarr')
+        sdata = sd.read_zarr('Visium_HD.zarr')
         adata = sdata.tables["square_008um"]
 
     adata.obsm["X_spatial"] = adata.obsm["spatial"]
