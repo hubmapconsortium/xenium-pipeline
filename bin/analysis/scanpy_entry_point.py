@@ -6,12 +6,14 @@ import anndata
 import manhole
 import matplotlib.pyplot as plt
 import scanpy as sc
+import spatialdata as sd
+from subprocess import check_call
 
 from common import Assay
 from plot_utils import new_plot
 
 
-def main(assay: Assay, h5ad_file: Path):
+def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     adata = anndata.read_h5ad(h5ad_file)
     if assay.secondary_analysis_layer in adata.layers:
         adata.X = adata.layers[assay.secondary_analysis_layer]
@@ -72,6 +74,12 @@ def main(assay: Assay, h5ad_file: Path):
     # Save normalized/etc. data
     adata.write_h5ad(output_file)
 
+    sdata = sd.read_zarr(sdata_zarr)
+    sdata.tables["processed"] = adata
+    sdata.write_zarr(sdata_zarr)
+
+    check_call(f"zip -r {sdata_zarr.name}.zip {sdata_zarr.name}", shell=True)
+
 
 if __name__ == "__main__":
     manhole.install(activate_on="USR1")
@@ -79,6 +87,7 @@ if __name__ == "__main__":
     p = ArgumentParser()
     p.add_argument("assay", choices=list(Assay), type=Assay)
     p.add_argument("alevin_h5ad_file", type=Path)
+    p.add_argument("sdata_zarr", type=Path)
     args = p.parse_args()
 
-    main(args.assay, args.alevin_h5ad_file)
+    main(args.assay, args.alevin_h5ad_file, args.sdata_zarr)
