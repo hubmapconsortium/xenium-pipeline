@@ -49,6 +49,10 @@ outputs:
     outputBinding:
       glob: marker_genes_by_cluster_logreg.pdf
   sdata_zarr:
+    type: Directory
+    outputBinding:
+      glob: "*.zarr"
+  sdata_zarr_zip:
     type: File
     outputBinding:
       glob: "*.zarr.zip"
