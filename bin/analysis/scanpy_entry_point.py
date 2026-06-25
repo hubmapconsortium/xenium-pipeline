@@ -13,6 +13,13 @@ from common import Assay
 from plot_utils import new_plot
 
 
+def zip_spatialdata(spatialdata_path):
+    print("Zipping SpatialData")
+    check_call(f"cd {spatialdata_path.name}", shell=True)
+    check_call(f"zip -r {spatialdata_path.name}.zip .", shell=True)
+    check_call("cd ..", shell=True)
+    check_call(f"mv {spatialdata_path.name}/{spatialdata_path.name}.zip .", shell=True)
+
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     adata = anndata.read_h5ad(h5ad_file)
     if assay.secondary_analysis_layer in adata.layers:
@@ -78,7 +85,7 @@ def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     sdata.tables["processed"] = sd.models.TableModel.parse(adata)
     sdata.write(sdata_zarr.name)
 
-    check_call(f"zip -r {sdata_zarr.name}.zip {sdata_zarr.name}", shell=True)
+    zip_spatialdata(sdata_zarr)
 
 
 if __name__ == "__main__":
