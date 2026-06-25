@@ -76,7 +76,7 @@ def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
 
     sdata = sd.read_zarr(sdata_zarr)
     sdata.tables["processed"] = sd.models.TableModel.parse(adata)
-    sdata.write_zarr(sdata_zarr)
+    sdata.write(sdata_zarr.name)
 
     check_call(f"zip -r {sdata_zarr.name}.zip {sdata_zarr.name}", shell=True)
 
