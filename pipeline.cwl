@@ -18,9 +18,9 @@ outputs:
     outputSource: convert_formats/count_matrix_h5ad
     type: File
     label: "Count matrix converted to h5ad"
-  sdata_zarr:
-    outputSource: convert_formats/sdata_zarr
-    type: Directory
+  sdata_zarr_zip:
+    outputSource: scanpy_analysis/sdata_zarr_zip
+    type: File
     label: "SpatialData object serialized in zarr format"
   scanpy_qc_results:
     outputSource: compute_qc_results/scanpy_qc_results
@@ -96,6 +96,8 @@ steps:
         source: assay
       h5ad_file:
         source: convert_formats/count_matrix_h5ad
+      sdata_zarr:
+        source: convert_formats/sdata_zarr
     out:
       - filtered_data_h5ad
       - umap_plot
@@ -104,6 +106,8 @@ steps:
       - dispersion_plot
       - umap_density_plot
       - spatial_plot
+      - sdata_zarr
+      - sdata_zarr_zip
     run: steps/scanpy-analysis.cwl
     label: "Secondary analysis via ScanPy"
   squidpy_analysis:
@@ -113,7 +117,7 @@ steps:
       h5ad_file:
         source: scanpy_analysis/filtered_data_h5ad
       sdata_zarr:
-        source: convert_formats/sdata_zarr
+        source: scanpy_analysis/sdata_zarr
     out:
       - squidpy_annotated_h5ad
       - neighborhood_enrichment_plot

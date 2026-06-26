@@ -6,22 +6,30 @@ import anndata
 import manhole
 import matplotlib.pyplot as plt
 import scanpy as sc
+import spatialdata as sd
+from subprocess import check_call
 
 from common import Assay
 from plot_utils import new_plot
 
 
-def main(assay: Assay, h5ad_file: Path):
+def zip_spatialdata(spatialdata_path):
+    print("Zipping SpatialData")
+    check_call(f"cd {spatialdata_path.name}", shell=True)
+    check_call(f"zip -r {spatialdata_path.name}.zip .", shell=True)
+    check_call("cd ..", shell=True)
+
+def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     adata = anndata.read_h5ad(h5ad_file)
     if assay.secondary_analysis_layer in adata.layers:
         adata.X = adata.layers[assay.secondary_analysis_layer]
     adata.var_names_make_unique()
 
     # remove cells with fewer than 5 total gene counts
-    sc.pp.filter_cells(adata, min_counts=5)
+    sc.pp.filter_cells(adata, min_genes=10)
 
     # remove genes that are not expressed in any cell
-    sc.pp.filter_genes(adata, min_cells=1)
+    sc.pp.filter_genes(adata, min_cells=3)
     # add the total counts per cell as observations-annotation to adata
 
     adata.obs["n_counts"] = adata.X.sum(axis=1)
@@ -72,6 +80,12 @@ def main(assay: Assay, h5ad_file: Path):
     # Save normalized/etc. data
     adata.write_h5ad(output_file)
 
+    sdata = sd.read_zarr(sdata_zarr)
+    sdata.tables["processed"] = sd.models.TableModel.parse(adata)
+    sdata.write(sdata_zarr.name)
+
+    zip_spatialdata(sdata_zarr)
+
 
 if __name__ == "__main__":
     manhole.install(activate_on="USR1")
@@ -79,6 +93,7 @@ if __name__ == "__main__":
     p = ArgumentParser()
     p.add_argument("assay", choices=list(Assay), type=Assay)
     p.add_argument("alevin_h5ad_file", type=Path)
+    p.add_argument("sdata_zarr", type=Path)
     args = p.parse_args()
 
-    main(args.assay, args.alevin_h5ad_file)
+    main(args.assay, args.alevin_h5ad_file, args.sdata_zarr)

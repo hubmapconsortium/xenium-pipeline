@@ -3,7 +3,7 @@ class: CommandLineTool
 label: Dimensionality reduction and clustering
 requirements:
   DockerRequirement:
-    dockerPull: hubmap/spatial-transcriptomics-analysis:0.2.6
+    dockerPull: hubmap/spatial-transcriptomics-analysis:latest
 baseCommand: /opt/scanpy_entry_point.py
 
 inputs:
@@ -15,6 +15,10 @@ inputs:
     type: File
     inputBinding:
       position: 1
+  sdata_zarr:
+    type: Directory
+    inputBinding:
+      position: 2
 outputs:
   filtered_data_h5ad:
     type: File
@@ -44,3 +48,11 @@ outputs:
     type: File
     outputBinding:
       glob: marker_genes_by_cluster_logreg.pdf
+  sdata_zarr:
+    type: Directory
+    outputBinding:
+      glob: "*.zarr"
+  sdata_zarr_zip:
+    type: File
+    outputBinding:
+      glob: "*.zarr.zip"
