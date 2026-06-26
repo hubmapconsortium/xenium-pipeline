@@ -15,6 +15,10 @@ inputs:
     type: File
     inputBinding:
       position: 1
+  sdata_zarr:
+    type: Directory
+    inputBinding:
+      position: 2
 outputs:
   filtered_data_h5ad:
     type: File
@@ -44,3 +48,11 @@ outputs:
     type: File
     outputBinding:
       glob: marker_genes_by_cluster_logreg.pdf
+  sdata_zarr:
+    type: Directory
+    outputBinding:
+      glob: "*.zarr"
+  sdata_zarr_zip:
+    type: File
+    outputBinding:
+      glob: "*.zarr.zip"
