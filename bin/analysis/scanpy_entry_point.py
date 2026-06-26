@@ -18,7 +18,6 @@ def zip_spatialdata(spatialdata_path):
     check_call(f"cd {spatialdata_path.name}", shell=True)
     check_call(f"zip -r {spatialdata_path.name}.zip .", shell=True)
     check_call("cd ..", shell=True)
-    check_call(f"mv {spatialdata_path.name}/{spatialdata_path.name}.zip .", shell=True)
 
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
     adata = anndata.read_h5ad(h5ad_file)
