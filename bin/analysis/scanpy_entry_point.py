@@ -15,8 +15,12 @@ from plot_utils import new_plot
 
 def zip_spatialdata(spatialdata_path):
     print("Zipping SpatialData")
+    dont_include = [".cache", "cache", "spatial_scatter.pdf"]
+    exclude_str = " ".join(
+        [f'-x "{name}" -x "{name}/**"' for name in dont_include]
+    )
     check_call(f"cd {spatialdata_path.name}", shell=True)
-    check_call(f"zip -r {spatialdata_path.name}.zip .", shell=True)
+    check_call(f"zip -r {spatialdata_path.name}.zip . {exclude_str}", shell=True)
     check_call("cd ..", shell=True)
 
 def main(assay: Assay, h5ad_file: Path, sdata_zarr: Path):
